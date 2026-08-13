@@ -49,6 +49,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Moon phase with night-focused messaging
 - Compare up to 3 favorite cities
 - Google Maps location view with RainViewer radar overlay
+- Global Disaster Monitor: live earthquakes (USGS), storms/wildfires/floods (NASA EONET), and NOAA alerts on a shared map
 - Favorites persisted in localStorage
 - Celsius / Fahrenheit toggle
 - Light / dark theme

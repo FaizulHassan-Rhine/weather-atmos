@@ -2,10 +2,12 @@
 
 import { MoonStar } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import DayNightCircle from "@/components/dashboard/DayNightCircle";
+import MoonPhaseVisual from "@/components/dashboard/MoonPhaseVisual";
 import { useI18n } from "@/hooks/useI18n";
 import { formatSunTime } from "@/lib/date";
 import { getMoonMessage, getMoonPhase, getMoonTimes, getNextMajorMoonDates } from "@/lib/moon";
-import { estimateCivilTwilight, formatDuration, getDaylightProgress } from "@/lib/sun";
+import { estimateCivilTwilight, formatDuration, getDayNightSplit } from "@/lib/sun";
 import { getWeatherMessage } from "@/lib/weatherCodes";
 
 function formatCalendarDate(iso, timezone) {
@@ -42,7 +44,12 @@ export default function AstronomyCard({ weather, location }) {
     precipProbability: weather.hourly?.precipitation_probability?.[0],
     temperature: current.temperature_2m,
   });
-  const progress = getDaylightProgress({ sunrise, sunset });
+  const dayNight = getDayNightSplit({
+    sunrise,
+    sunset,
+    daylightSeconds: daily?.daylight_duration?.[0],
+    timezone,
+  });
   const civil = estimateCivilTwilight({
     sunrise,
     sunset,
@@ -91,17 +98,9 @@ export default function AstronomyCard({ weather, location }) {
         </div>
       </div>
 
-      <div>
-        <div className="mb-2 flex items-center justify-between text-xs text-muted-soft">
-          <span>{t("Daylight progress")}</span>
-          <span>{Math.round(progress.percent)}%</span>
-        </div>
-        <div className="h-2 rounded-full bg-mint/70 dark:bg-white/10">
-          <div
-            className="h-2 rounded-full bg-primary transition-[width] duration-500"
-            style={{ width: `${progress.percent}%` }}
-          />
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MoonPhaseVisual moon={moon} />
+        <DayNightCircle split={dayNight} />
       </div>
 
       <div className="grid gap-3 text-sm text-muted-soft sm:grid-cols-2 lg:grid-cols-3">

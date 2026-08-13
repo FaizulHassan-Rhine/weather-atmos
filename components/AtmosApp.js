@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import Header from "@/components/ui/Header";
 import WeatherDashboard from "@/components/dashboard/WeatherDashboard";
-import EarthquakeDashboard from "@/components/earthquake/EarthquakeDashboard";
+import DisasterDashboard from "@/components/disaster/DisasterDashboard";
 import AirQualityDashboard from "@/components/air/AirQualityDashboard";
 import useFavorites from "@/hooks/useFavorites";
 import useGeolocation from "@/hooks/useGeolocation";
@@ -16,7 +16,12 @@ import { I18nProvider, useI18n } from "@/hooks/useI18n";
 import { DHAKA, reverseGeocode } from "@/lib/openMeteo";
 import { cityFromSearchParams, cityToSearchParams } from "@/lib/share";
 
-const VALID_VIEWS = new Set(["weather", "earthquakes", "air"]);
+const VALID_VIEWS = new Set(["weather", "earthquakes", "disasters", "air"]);
+
+function resolveView(raw) {
+  if (raw === "earthquakes") return "disasters";
+  return VALID_VIEWS.has(raw) ? raw : "weather";
+}
 
 export default function AtmosApp() {
   const [language, setLanguage] = useLocalStorage("atmos-language", "en");
@@ -62,14 +67,14 @@ function AtmosAppInner({ language, setLanguage }) {
   const { requestLocation } = useGeolocation();
 
   const viewFromUrl = searchParams.get("view");
-  const view = VALID_VIEWS.has(viewFromUrl) ? viewFromUrl : "weather";
+  const view = resolveView(viewFromUrl);
 
   const syncUrl = useCallback(
     (city, nextView = view) => {
       if (typeof window === "undefined") return;
       const params = city ? cityToSearchParams(city) : new URLSearchParams();
       if (nextView && nextView !== "weather") {
-        params.set("view", nextView);
+        params.set("view", nextView === "earthquakes" ? "disasters" : nextView);
       }
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, {
@@ -187,19 +192,19 @@ function AtmosAppInner({ language, setLanguage }) {
 
     async function bootstrap() {
       if (VALID_VIEWS.has(viewFromUrl)) {
-        setStoredView(viewFromUrl);
+        setStoredView(resolveView(viewFromUrl));
       }
 
       const fromUrl = cityFromSearchParams(searchParams);
       if (fromUrl) {
         selectCity(fromUrl, { sync: false });
-        syncUrl(fromUrl, VALID_VIEWS.has(viewFromUrl) ? viewFromUrl : "weather");
+        syncUrl(fromUrl, resolveView(viewFromUrl));
         setBootstrapped(true);
         return;
       }
 
       if (location) {
-        syncUrl(location, VALID_VIEWS.has(viewFromUrl) ? viewFromUrl : "weather");
+        syncUrl(location, resolveView(viewFromUrl));
         setBootstrapped(true);
         return;
       }
@@ -244,7 +249,8 @@ function AtmosAppInner({ language, setLanguage }) {
     if (!same) selectCity(fromUrl, { sync: false });
   }, [bootstrapped, location, searchParams, selectCity]);
 
-  const showSearch = view === "weather" || view === "air" || view === "earthquakes";
+  const showSearch =
+    view === "weather" || view === "air" || view === "disasters";
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
@@ -302,8 +308,8 @@ function AtmosAppInner({ language, setLanguage }) {
           />
         ) : null}
 
-        {view === "earthquakes" ? (
-          <EarthquakeDashboard
+        {view === "disasters" ? (
+          <DisasterDashboard
             location={location}
             theme={theme}
             favorites={favorites}
@@ -325,9 +331,9 @@ function AtmosAppInner({ language, setLanguage }) {
       </main>
 
       <footer className="relative mx-auto max-w-7xl px-4 pb-10 pt-2 text-center text-xs text-muted-soft sm:px-6 lg:px-8">
-        {view === "earthquakes" ? (
+        {view === "disasters" ? (
           <>
-            Earthquake data by{" "}
+            Disaster data by{" "}
             <a
               href="https://earthquake.usgs.gov/"
               target="_blank"
@@ -335,6 +341,24 @@ function AtmosAppInner({ language, setLanguage }) {
               className="underline decoration-sky/60 underline-offset-2 transition hover:text-primary"
             >
               USGS
+            </a>
+            ,{" "}
+            <a
+              href="https://eonet.gsfc.nasa.gov/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-sky/60 underline-offset-2 transition hover:text-primary"
+            >
+              NASA EONET
+            </a>
+            , and{" "}
+            <a
+              href="https://www.weather.gov/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-sky/60 underline-offset-2 transition hover:text-primary"
+            >
+              NOAA
             </a>
             . Maps by Google when configured.
           </>

@@ -1,11 +1,11 @@
 "use client";
 
-import { Activity, CloudSun, Wind } from "lucide-react";
+import { CloudSun, Tornado, Wind } from "lucide-react";
 import { useI18n } from "@/hooks/useI18n";
 
 const TABS = [
   { id: "weather", label: "Weather", Icon: CloudSun },
-  { id: "earthquakes", label: "Earthquakes", Icon: Activity },
+  { id: "disasters", label: "Disasters", Icon: Tornado },
   { id: "air", label: "Air Quality", Icon: Wind },
 ];
 

@@ -11,9 +11,20 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata = {
   title: "Atmos — Calm Weather Forecasts",
   description:
-    "A modern weather dashboard with hourly forecasts, weekly outlooks, favorite cities, and interactive maps.",
+    "A modern weather dashboard with hourly forecasts, air quality, and a global disaster monitor for earthquakes, storms, wildfires, and floods.",
   applicationName: "Atmos",
-  keywords: ["weather", "forecast", "Atmos", "Open-Meteo", "dashboard"],
+  keywords: [
+    "weather",
+    "forecast",
+    "Atmos",
+    "Open-Meteo",
+    "dashboard",
+    "earthquakes",
+    "disasters",
+    "USGS",
+    "NASA EONET",
+    "NOAA",
+  ],
 };
 
 export const viewport = {

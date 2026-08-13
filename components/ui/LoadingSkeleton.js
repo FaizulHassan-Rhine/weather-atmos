@@ -107,7 +107,10 @@ export function AstronomySkeleton() {
           <SkeletonBlock key={index} className="h-14 w-full rounded-2xl" />
         ))}
       </div>
-      <SkeletonBlock className="mt-4 h-2 w-full rounded-full" />
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <SkeletonBlock className="h-52 w-full rounded-2xl" />
+        <SkeletonBlock className="h-52 w-full rounded-2xl" />
+      </div>
       <SkeletonBlock className="mt-4 h-16 w-full rounded-2xl" />
     </div>
   );

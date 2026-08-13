@@ -56,7 +56,7 @@ export default function Header({
 
           <div className="flex flex-wrap items-center gap-2">
             <LanguageToggle language={language} onChange={onLanguageChange} />
-            {view !== "earthquakes" ? (
+            {view !== "earthquakes" && view !== "disasters" ? (
               <UnitToggle unit={unit} onChange={onUnitChange} />
             ) : null}
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
